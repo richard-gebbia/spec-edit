@@ -1,7 +1,7 @@
 port module Spec exposing (..)
 
 import Debug
-import Feature
+import Requirement
 import Html exposing (..)
 import Html.App as Html
 import Html.Attributes exposing (class, value, id)
@@ -18,7 +18,7 @@ import UndoRedo as UR
 
 type alias Model = 
     { isEditingTitle: Bool
-    , features: IntDict Feature.Model
+    , requirements: IntDict Requirement.Model
     , nextUid: Int
     , title: String
     }
@@ -32,7 +32,7 @@ init : Encode.Value -> Model
 init json = 
     Decode.decodeValue decoder json
     |> Result.withDefault 
-        { features = IntDict.empty
+        { requirements = IntDict.empty
         , nextUid = 0
         , title = "Untitled"
         , isEditingTitle = False
@@ -42,34 +42,34 @@ init json =
 decoder : Decode.Decoder Model
 decoder =
     let
-        featureDecoder : Decode.Decoder (IntDict Feature.Model)
-        featureDecoder =
-            Feature.decoder
-            |> Decode.map (\feature -> (feature.uid, feature))
+        requirementDecoder : Decode.Decoder (IntDict Requirement.Model)
+        requirementDecoder =
+            Requirement.decoder
+            |> Decode.map (\requirement -> (requirement.uid, requirement))
             |> Decode.list
             |> Decode.map IntDict.fromList
     in
     Decode.object3 (Model False)
-        ("features" := featureDecoder)
+        ("requirements" := requirementDecoder)
         ("nextUid" := Decode.int)
         ("title" := Decode.string)
 
 
 encode : Model -> Encode.Value
-encode { features, nextUid, title, isEditingTitle } =
+encode { requirements, nextUid, title, isEditingTitle } =
     Encode.object
         [ ("title", Encode.string title)
         , ("nextUid", Encode.int nextUid)
-        , ("features", IntDict.values features |> List.map Feature.encode |> Encode.list)
+        , ("requirements", IntDict.values requirements |> List.map Requirement.encode |> Encode.list)
         ]
 
 
 -- Msg
 
 type Msg
-    = NewFeature
-    | FeatureUpdate Int Feature.Msg
-    | FocusFeature String
+    = NewRequirement
+    | RequirementUpdate Int Requirement.Msg
+    | FocusRequirement String
     | LoadSpec Model
     | SaveSpec String
     | EditTitle
@@ -91,54 +91,54 @@ port diffSpec : SaveInfo -> Cmd msg
 port focus : String -> Cmd msg
 
 
-checkToDelete : Int -> Maybe Feature.Event -> IntDict Feature.Model -> IntDict Feature.Model
-checkToDelete index maybeDeleteEvent features =
+checkToDelete : Int -> Maybe Requirement.Event -> IntDict Requirement.Model -> IntDict Requirement.Model
+checkToDelete index maybeDeleteEvent requirements =
     case maybeDeleteEvent of
-        Just Feature.Delete ->
-            IntDict.safeRemove index features |> Result.withDefault features
+        Just Requirement.Delete ->
+            IntDict.safeRemove index requirements |> Result.withDefault requirements
 
         _ ->
-            features
+            requirements
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
-        NewFeature ->
+        NewRequirement ->
             (
                 { model 
-                | features = 
+                | requirements = 
                     let 
-                        newFeature : Feature.Model
-                        newFeature = 
-                            Feature.init model.nextUid ("Feature " ++ toString model.nextUid)
+                        newRequirement : Requirement.Model
+                        newRequirement = 
+                            Requirement.init model.nextUid ("Requirement " ++ toString model.nextUid)
                     in
-                    IntDict.safeInsert model.nextUid newFeature model.features
-                    |> Result.withDefault model.features
+                    IntDict.safeInsert model.nextUid newRequirement model.requirements
+                    |> Result.withDefault model.requirements
 
                 , nextUid = model.nextUid + 1
                 }
             ,   Cmd.none
             )
 
-        FeatureUpdate index featureMsg ->
+        RequirementUpdate index requirementMsg ->
             (   { model
-                | features =
+                | requirements =
                     IntDict.safeGet 
                         index 
-                        model.features
+                        model.requirements
                     |> Result.withDefault Nothing
-                    |> Maybe.map (Feature.update featureMsg)
-                    |> Maybe.map (\(newFeature, maybeFeatureEvent) -> 
-                        IntDict.safeInsert index newFeature model.features
-                        |> Result.withDefault model.features
-                        |> checkToDelete index maybeFeatureEvent)
-                    |> Maybe.withDefault model.features
+                    |> Maybe.map (Requirement.update requirementMsg)
+                    |> Maybe.map (\(newRequirement, maybeRequirementEvent) -> 
+                        IntDict.safeInsert index newRequirement model.requirements
+                        |> Result.withDefault model.requirements
+                        |> checkToDelete index maybeRequirementEvent)
+                    |> Maybe.withDefault model.requirements
                 }
             ,   Cmd.none
             )
 
-        FocusFeature id ->
+        FocusRequirement id ->
             (model, focus id)
 
         LoadSpec newModel ->
@@ -181,11 +181,11 @@ update msg model =
 -- View
 
 view : Model -> Html Msg
-view { features, nextUid, title, isEditingTitle } =
+view { requirements, nextUid, title, isEditingTitle } =
     let 
-        viewFeature : Int -> Feature.Model -> Html Msg
-        viewFeature index feature =
-            Html.map (FeatureUpdate index) (Feature.view feature)
+        viewRequirement : Int -> Requirement.Model -> Html Msg
+        viewRequirement index requirement =
+            Html.map (RequirementUpdate index) (Requirement.view requirement)
 
         viewTitle : Html Msg
         viewTitle =
@@ -203,34 +203,34 @@ view { features, nextUid, title, isEditingTitle } =
             h1  [ class "title", onClick EditTitle ]
                 [ text title ]
 
-        featureButton : Int -> Feature.Model -> Html Msg
-        featureButton index feature =
+        featureButton : Int -> Requirement.Model -> Html Msg
+        featureButton index requirement =
             div []
                 [ button 
-                    [ class "navbar-feature-button"
-                    , onClick (FocusFeature (Feature.getId index))
+                    [ class "navbar-requirement-button"
+                    , onClick (FocusRequirement (Requirement.getId index))
                     ] 
-                    [ text feature.name ] 
+                    [ text requirement.name ] 
                 ]
     in
     div []
         [   div [ class "content-wrapper" ]
                 (   viewTitle
-                ::  (IntDict.map viewFeature features |> IntDict.values)
+                ::  (IntDict.map viewRequirement requirements |> IntDict.values)
                 ++  [   div [ class "add-button-parent" ]
                             [ button 
-                                [ onClick NewFeature
+                                [ onClick NewRequirement
                                 , class "add-button" 
                                 ] 
-                                [ text "New Feature" 
+                                [ text "New Requirement" 
                                 ]
                             ]
                     ]
                 )
         ,   div [ class "navbar" ] 
-                (   b [ class "navbar-title" ] [ text "Features" ]
+                (   b [ class "navbar-title" ] [ text "Requirements" ]
                 ::  hr [] []
-                ::  (IntDict.map featureButton features |> IntDict.values)
+                ::  (IntDict.map featureButton requirements |> IntDict.values)
                 )
         ]
 

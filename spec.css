@@ -13,7 +13,7 @@ body {
     float: right;
 }
 
-.feature {
+.requirement {
     border-style: solid;
     border-color: black;
     border-width: 1px;
@@ -36,13 +36,13 @@ body {
     color: black;
 }
 
-.feature-box {
+.requirement-box {
     padding-left: 40px;
     padding-right: 40px;
     text-align: left;
 }
 
-.feature-name {
+.requirement-name {
     width: 100%;
     box-sizing: border-box;
     padding: 10px;
@@ -53,11 +53,11 @@ body {
     border-width: 1px;
 }
 
-.feature-name:focus {
+.requirement-name:focus {
     background-color: #FAFAF2;
 }
 
-.feature-desc {
+.requirement-desc {
     resize: none;
     width: 100%;
     box-sizing: border-box;
@@ -67,7 +67,7 @@ body {
     line-height: 1.5;
 }
 
-.feature-desc:focus {
+.requirement-desc:focus {
     background-color: #FAFAF2;
 }
 
@@ -117,7 +117,7 @@ body {
     font-size: 20px;
 }
 
-.navbar-feature-button {
+.navbar-requirement-button {
     width: 100%;
     padding: 5px;
     background-color: lightgray;
@@ -126,16 +126,16 @@ body {
     font-size: 16px;
 }
 
-.navbar-feature-button:hover {
+.navbar-requirement-button:hover {
     background-color: gray;
     border-color: transparent;
 }
 
-.navbar-feature-button:active {
+.navbar-requirement-button:active {
     background-color: lightgoldenrodyellow;
     border-color: transparent;
 }
 
-.navbar-feature-button:focus {
+.navbar-requirement-button:focus {
     outline: none;
 }

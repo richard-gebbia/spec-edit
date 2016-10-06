@@ -1,4 +1,4 @@
-module Feature exposing (..)
+module Requirement exposing (..)
 
 import Html exposing (..)
 import Html.App as Html
@@ -71,18 +71,18 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div [ class "feature" ]
+    div [ class "requirement" ]
         [ button 
             [ onClick DeleteMe 
             , class "close-button"
             ] 
             [ text "X" ]
-        , div [ class "feature-box" ]
+        , div [ class "requirement-box" ]
             [ p [] 
                 [ label [ for (getId model.uid) ] [ text "Name" ]
                 , br [] []
                 , input 
-                    [ class "feature-name"
+                    [ class "requirement-name"
                     , id (getId model.uid)
                     , value model.name 
                     , on "input" (Decode.map EditName targetValue)
@@ -92,7 +92,7 @@ view model =
                 [ label [ for "descField" ] [ text "Description" ]
                 , br [] []
                 , textarea 
-                    [ class "feature-desc"
+                    [ class "requirement-desc"
                     , rows 5
                     , id "descField"
                     , value model.description 
@@ -107,4 +107,4 @@ view model =
 
 getId : Int -> String
 getId uid =
-    "feature" ++ toString uid
+    "requirement" ++ toString uid
