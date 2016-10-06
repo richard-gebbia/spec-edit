@@ -1,0 +1,394 @@
+[
+    {
+        "requirementUid": 0, 
+        "uri": {
+            "start": {
+                "col": 8, 
+                "row": 106
+            }, 
+            "end": {
+                "col": 13, 
+                "row": 121
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 0, 
+        "uri": {
+            "start": {
+                "col": 24, 
+                "row": 219
+            }, 
+            "end": {
+                "col": 29, 
+                "row": 226
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 2, 
+        "uri": {
+            "start": {
+                "col": 0, 
+                "row": 93
+            }, 
+            "end": {
+                "col": 24, 
+                "row": 100
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 3, 
+        "uri": {
+            "start": {
+                "col": 8, 
+                "row": 154
+            }, 
+            "end": {
+                "col": 62, 
+                "row": 155
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 3, 
+        "uri": {
+            "start": {
+                "col": 8, 
+                "row": 157
+            }, 
+            "end": {
+                "col": 13, 
+                "row": 163
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 3, 
+        "uri": {
+            "start": {
+                "col": 22, 
+                "row": 193
+            }, 
+            "end": {
+                "col": 28, 
+                "row": 199
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 3, 
+        "uri": {
+            "start": {
+                "col": 33, 
+                "row": 202
+            }, 
+            "end": {
+                "col": 50, 
+                "row": 202
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 4, 
+        "uri": {
+            "start": {
+                "col": 12, 
+                "row": 229
+            }, 
+            "end": {
+                "col": 17, 
+                "row": 233
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 5, 
+        "uri": {
+            "start": {
+                "col": 0, 
+                "row": 90
+            }, 
+            "end": {
+                "col": 30, 
+                "row": 90
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 5, 
+        "uri": {
+            "start": {
+                "col": 8, 
+                "row": 140
+            }, 
+            "end": {
+                "col": 29, 
+                "row": 141
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 5, 
+        "uri": {
+            "start": {
+                "col": 8, 
+                "row": 205
+            }, 
+            "end": {
+                "col": 17, 
+                "row": 213
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 6, 
+        "uri": {
+            "start": {
+                "col": 0, 
+                "row": 57
+            }, 
+            "end": {
+                "col": 9, 
+                "row": 63
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 6, 
+        "uri": {
+            "start": {
+                "col": 0, 
+                "row": 88
+            }, 
+            "end": {
+                "col": 35, 
+                "row": 88
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 6, 
+        "uri": {
+            "start": {
+                "col": 8, 
+                "row": 146
+            }, 
+            "end": {
+                "col": 13, 
+                "row": 152
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 6, 
+        "uri": {
+            "start": {
+                "col": 0, 
+                "row": 240
+            }, 
+            "end": {
+                "col": 49, 
+                "row": 240
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 6, 
+        "uri": {
+            "start": {
+                "col": 10, 
+                "row": 258
+            }, 
+            "end": {
+                "col": 47, 
+                "row": 258
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 7, 
+        "uri": {
+            "start": {
+                "col": 0, 
+                "row": 41
+            }, 
+            "end": {
+                "col": 34, 
+                "row": 54
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 7, 
+        "uri": {
+            "start": {
+                "col": 8, 
+                "row": 143
+            }, 
+            "end": {
+                "col": 32, 
+                "row": 144
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 7, 
+        "uri": {
+            "start": {
+                "col": 0, 
+                "row": 239
+            }, 
+            "end": {
+                "col": 42, 
+                "row": 239
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 7, 
+        "uri": {
+            "start": {
+                "col": 8, 
+                "row": 250
+            }, 
+            "end": {
+                "col": 38, 
+                "row": 254
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 7, 
+        "uri": {
+            "start": {
+                "col": 10, 
+                "row": 257
+            }, 
+            "end": {
+                "col": 47, 
+                "row": 257
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 8, 
+        "uri": {
+            "start": {
+                "col": 0, 
+                "row": 89
+            }, 
+            "end": {
+                "col": 35, 
+                "row": 89
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 8, 
+        "uri": {
+            "start": {
+                "col": 8, 
+                "row": 168
+            }, 
+            "end": {
+                "col": 13, 
+                "row": 174
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 8, 
+        "uri": {
+            "start": {
+                "col": 0, 
+                "row": 241
+            }, 
+            "end": {
+                "col": 49, 
+                "row": 241
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 8, 
+        "uri": {
+            "start": {
+                "col": 10, 
+                "row": 259
+            }, 
+            "end": {
+                "col": 47, 
+                "row": 259
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 10, 
+        "uri": {
+            "start": {
+                "col": 0, 
+                "row": 243
+            }, 
+            "end": {
+                "col": 34, 
+                "row": 243
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 10, 
+        "uri": {
+            "start": {
+                "col": 0, 
+                "row": 244
+            }, 
+            "end": {
+                "col": 34, 
+                "row": 244
+            }, 
+            "file": "Spec.elm"
+        }
+    }, 
+    {
+        "requirementUid": 10, 
+        "uri": {
+            "start": {
+                "col": 10, 
+                "row": 261
+            }, 
+            "end": {
+                "col": 30, 
+                "row": 262
+            }, 
+            "file": "Spec.elm"
+        }
+    }
+]
