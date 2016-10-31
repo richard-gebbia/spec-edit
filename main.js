@@ -2,7 +2,7 @@ const {app, BrowserWindow, dialog, Menu} = require('electron')
 const ipc = require('electron').ipcMain
 const fs = require('fs')
 const os = require('os')
-const exec = require('child_process').exec
+const execFile = require('child_process').execFile
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -237,6 +237,14 @@ ipc.on('spec-json', (event, filename, specJson) => {
   fs.writeFile(filename, specJson)
 })
 
+function platformSpaces(filename) {
+  if (process.platform.startsWith("win")) {
+    return '"' + filename + '"'
+  }
+
+  return filename.replace(/\s/gi, "\\ ")
+}
+
 ipc.on('diff-json', (event, oldSpecFilename, specJson) => {
   let newSpecFilename = `${os.tmpdir()}/diff-spec-temp.json`
   fs.writeFile(newSpecFilename, specJson, (err) => {
@@ -251,7 +259,7 @@ ipc.on('diff-json', (event, oldSpecFilename, specJson) => {
     }, (filename) => {
       if (!filename) return
 
-      exec(`./spec diff --spec1 "${oldSpecFilename}" --spec2 "${newSpecFilename}"`, { 
+      execFile(process.cwd() + "/spec", ["diff", "--spec1", platformSpaces(`${oldSpecFilename}`), "--spec2", platformSpaces(`${newSpecFilename}`)], { 
         encoding: 'utf8'
       }, (err, stdout, stderr) => {
         if (err) {
