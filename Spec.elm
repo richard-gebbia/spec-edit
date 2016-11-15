@@ -3,12 +3,11 @@ port module Spec exposing (..)
 import Debug
 import Requirement
 import Html exposing (..)
-import Html.App as Html
 import Html.Attributes exposing (class, value, id)
 import Html.Events exposing (onClick, on, targetValue)
 import IntDict exposing (IntDict)
 import IntDict.Safe as IntDict
-import Json.Decode as Decode exposing ((:=))
+import Json.Decode as Decode exposing (field)
 import Json.Encode as Encode
 import Result
 import UndoList as UL
@@ -49,10 +48,10 @@ decoder =
             |> Decode.list
             |> Decode.map IntDict.fromList
     in
-    Decode.object3 (Model False)
-        ("requirements" := requirementDecoder)
-        ("nextUid" := Decode.int)
-        ("title" := Decode.string)
+    Decode.map3 (Model False)
+        (field "requirements" requirementDecoder)
+        (field "nextUid" Decode.int)
+        (field "title" Decode.string)
 
 
 encode : Model -> Encode.Value

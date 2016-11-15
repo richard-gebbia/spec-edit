@@ -1,10 +1,9 @@
 module Requirement exposing (..)
 
 import Html exposing (..)
-import Html.App as Html
 import Html.Attributes exposing (id, for, value, class, rows)
 import Html.Events exposing (onClick, on, targetValue)
-import Json.Decode as Decode exposing ((:=))
+import Json.Decode as Decode exposing (field)
 import Json.Encode as Encode
 
 -- Model
@@ -26,10 +25,10 @@ init uid name =
 
 decoder : Decode.Decoder Model
 decoder =
-    Decode.object3 Model
-        ("uid" := Decode.int)
-        ("name" := Decode.string)
-        ("description" := Decode.string)
+    Decode.map3 Model
+        (field "uid" Decode.int)
+        (field "name" Decode.string)
+        (field "description" Decode.string)
 
 
 encode : Model -> Encode.Value

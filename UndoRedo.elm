@@ -3,6 +3,9 @@ module UndoRedo exposing (..)
 import Html exposing (Html)
 import UndoList exposing (UndoList)
 
+fst = Tuple.first
+snd = Tuple.second
+
 init : (model, Cmd msg) -> (UndoList (model, Cmd msg), Cmd (UndoList.Msg msg))
 init (model, cmd) = (UndoList.fresh (model, cmd), Cmd.map UndoList.New cmd)
 
