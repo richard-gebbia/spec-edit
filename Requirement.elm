@@ -1,18 +1,19 @@
 module Requirement exposing (..)
 
 import Html exposing (..)
-import Html.App as Html
 import Html.Attributes exposing (id, for, value, class, rows)
 import Html.Events exposing (onClick, on, targetValue)
-import Json.Decode as Decode exposing ((:=))
+import Json.Decode as Decode
 import Json.Encode as Encode
+
 
 -- Model
 
+
 type alias Model =
-    { uid: Int
-    , name: String
-    , description: String
+    { uid : Int
+    , name : String
+    , description : String
     }
 
 
@@ -26,22 +27,24 @@ init uid name =
 
 decoder : Decode.Decoder Model
 decoder =
-    Decode.object3 Model
-        ("uid" := Decode.int)
-        ("name" := Decode.string)
-        ("description" := Decode.string)
+    Decode.map3 Model
+        (Decode.field "uid" Decode.int)
+        (Decode.field "name" Decode.string)
+        (Decode.field "description" Decode.string)
 
 
 encode : Model -> Encode.Value
 encode { uid, name, description } =
     Encode.object
-        [ ("uid", Encode.int uid)
-        , ("name", Encode.string name)
-        , ("description", Encode.string description)
+        [ ( "uid", Encode.int uid )
+        , ( "name", Encode.string name )
+        , ( "description", Encode.string description )
         ]
 
 
+
 -- Msg
+
 
 type Msg
     = EditName String
@@ -49,61 +52,70 @@ type Msg
     | DeleteMe
 
 
+
 -- Update
+
 
 type Event
     = Delete
 
-update : Msg -> Model -> (Model, Maybe Event)
+
+update : Msg -> Model -> ( Model, Maybe Event )
 update msg model =
     case msg of
         EditName newName ->
-            ({ model | name = newName }, Nothing)
+            ( { model | name = newName }, Nothing )
 
         EditDesc newDesc ->
-            ({ model | description = newDesc }, Nothing)
+            ( { model | description = newDesc }, Nothing )
 
         DeleteMe ->
-            (model, Just Delete)
+            ( model, Just Delete )
+
 
 
 -- View
 
+
 view : Model -> Html Msg
 view model =
     div [ class "requirement" ]
-        [ button 
-            [ onClick DeleteMe 
+        [ button
+            [ onClick DeleteMe
             , class "close-button"
-            ] 
+            ]
             [ text "X" ]
         , div [ class "requirement-box" ]
-            [ p [] 
+            [ p []
                 [ label [ for (getId model.uid) ] [ text "Name" ]
                 , br [] []
-                , input 
+                , input
                     [ class "requirement-name"
                     , id (getId model.uid)
-                    , value model.name 
+                    , value model.name
                     , on "input" (Decode.map EditName targetValue)
-                    ] []
+                    ]
+                    []
                 ]
             , p []
                 [ label [ for "descField" ] [ text "Description" ]
                 , br [] []
-                , textarea 
+                , textarea
                     [ class "requirement-desc"
                     , rows 5
                     , id "descField"
-                    , value model.description 
+                    , value model.description
                     , on "input" (Decode.map EditDesc targetValue)
-                    ] []
+                    ]
+                    []
                 ]
             ]
         ]
 
 
+
 -- Extra goodies
+
 
 getId : Int -> String
 getId uid =

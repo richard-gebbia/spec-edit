@@ -25,6 +25,10 @@ elmApp.ports.focus.subscribe((idToFocus) => {
   }
 })
 
+ipc.on('log-debug', (event, data) => {
+  console.log(data)
+})
+
 ipc.on('open-spec', (event, spec) => {
   elmApp.ports.loadSpec.send(spec)
 })

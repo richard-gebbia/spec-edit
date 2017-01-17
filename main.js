@@ -237,8 +237,10 @@ ipc.on('spec-json', (event, filename, specJson) => {
   fs.writeFile(filename, specJson)
 })
 
+const isWindows = process.platform.startsWith("win")
+
 function platformSpaces(filename) {
-  if (process.platform.startsWith("win")) {
+  if (isWindows) {
     return '"' + filename + '"'
   }
 
@@ -259,11 +261,15 @@ ipc.on('diff-json', (event, oldSpecFilename, specJson) => {
     }, (filename) => {
       if (!filename) return
 
-      execFile(process.cwd() + "/spec", ["diff", "--spec1", platformSpaces(`${oldSpecFilename}`), "--spec2", platformSpaces(`${newSpecFilename}`)], { 
+      let command = platformSpaces(__dirname + "/spec")
+
+      execFile(command, ["diff", "--spec1", platformSpaces(`${oldSpecFilename}`), "--spec2", platformSpaces(`${newSpecFilename}`)], { 
         encoding: 'utf8'
       }, (err, stdout, stderr) => {
         if (err) {
           console.log(err)
+          win.webContents.send('log-debug', err)
+          win.webContents.send('log-debug', stdout)
           return
         }
 
