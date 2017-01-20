@@ -1,0 +1,1 @@
+elm make Spec.elm --output=elm.js
