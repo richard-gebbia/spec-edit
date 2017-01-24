@@ -2,7 +2,7 @@ const {app, BrowserWindow, dialog, Menu} = require('electron')
 const ipc = require('electron').ipcMain
 const fs = require('fs')
 const os = require('os')
-const execFile = require('child_process').execFile
+const cp = require('child_process')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -16,13 +16,11 @@ function createWindow () {
   win.loadURL(`file://${__dirname}/index.html`)
 
   // Open the DevTools.
-  // win.webContents.openDevTools()
+  win.webContents.openDevTools()
 
   // Emitted when the window is closed.
   win.on('closed', () => {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
+    // Drop the reference to the window object
     win = null
   })
 }
@@ -38,6 +36,32 @@ app.on('window-all-closed', () => {
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
     app.quit()
+  }
+  
+  // On Windows there's a chance that we made a specific temp directory
+  // for diffs. On close we should delete that directory and its contents.
+  if (process.platform.startsWith("win")) {
+    let rm_rf = (path) => {
+      try {
+        const pathStats = fs.statsSync(path)
+      } catch (e) {
+        // if there was an error opening the path, it's likely that the path doesn't exist
+        // so we should just do nothing in that case
+        return
+      }
+      
+      if (pathStats.isDirectory()) {
+        const files = fs.readdirSync(path)
+        for (let i = 0; i < files.length; ++i) {
+          rm_rf(path)
+        }
+        fs.rmdir(path)
+      } else if (pathStats.isFile()) {
+        fs.unlinkSync(path)
+      }
+    }
+    
+    rm_rf("temp")
   }
 })
 
@@ -239,31 +263,56 @@ ipc.on('spec-json', (event, filename, specJson) => {
 
 const isWindows = process.platform.startsWith("win")
 
-function platformSpaces(filename) {
+function platformSpacesAndSlashes(filename) {
   if (isWindows) {
-    return '"' + filename + '"'
+    if (filename.search(" ") !== -1) {
+      filename = '"' + filename + '"'
+    }
+    filename = filename.replace("/", "\\")
   }
 
   return filename.replace(/\s/gi, "\\ ")
 }
 
 ipc.on('diff-json', (event, oldSpecFilename, specJson) => {
-  let newSpecFilename = `${os.tmpdir()}/diff-spec-temp.json`
+  // generate a filename for the spec that's currently being edited
+  let newSpecFilename
+  if (isWindows) {
+    try {
+      fs.statSync("temp")
+    } catch (e) {
+      // if "temp" doesn't exist, control flow will end up here
+      fs.mkdirSync("temp")
+    }
+    newSpecFilename = "temp\\diff-spec-temp.json"
+  } else {
+    newSpecFilename = platformSpacesAndSlashes(`${os.tmpdir()}/diff-spec-temp.json`)
+  }
+  
+  // write it out to a temp file (that should be deleted upon closing the program)
+  win.webContents.send('log-debug', newSpecFilename)
   fs.writeFile(newSpecFilename, specJson, (err) => {
     if (err) {
       console.log(err)
+      win.webContents.send('log-debug', err)
       return
     }
 
+    // make a file to save the diff to
     dialog.showSaveDialog({
       title: 'Save Diff as...',
       filters: fileTypeFilters
     }, (filename) => {
       if (!filename) return
+      
+      let command = platformSpacesAndSlashes(__dirname + "/spec")
+      oldSpecFilename = platformSpacesAndSlashes(oldSpecFilename)
+      
+      // Windows is stupid and if there is a space in the command, 
+      // then it MUST be executed via a shell.
+      const exec = (isWindows && command.search(" ") !== -1) ? cp.exec : cp.execFile
 
-      let command = platformSpaces(__dirname + "/spec")
-
-      execFile(command, ["diff", "--spec1", platformSpaces(`${oldSpecFilename}`), "--spec2", platformSpaces(`${newSpecFilename}`)], { 
+      exec(command, ["diff", "--spec1", oldSpecFilename, "--spec2", newSpecFilename], { 
         encoding: 'utf8'
       }, (err, stdout, stderr) => {
         if (err) {
