@@ -4,4 +4,8 @@ elm-stuff/
 # elm-repl generated files
 repl-temp-*
 elm.js
+# build and test artifacts
 spec
+spec.exe
+spec2.json
+diff.json

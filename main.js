@@ -16,7 +16,7 @@ function createWindow () {
   win.loadURL(`file://${__dirname}/index.html`)
 
   // Open the DevTools.
-  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -72,9 +72,6 @@ app.on('activate', () => {
     createWindow()
   }
 })
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
 
 let fileTypeFilters = [
   { name: 'JSON', extensions: ['json'] }
