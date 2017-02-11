@@ -1,5 +1,4 @@
 cabal_version = Cabal-1.22.5.0
-.PHONY: spec
 
 all:
 	elm make Spec.elm --output=elm.js

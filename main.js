@@ -4,9 +4,25 @@ const fs = require('fs')
 const os = require('os')
 const cp = require('child_process')
 
+//
+// Globals
+//
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
+
+// The name of the spec file that's currently being edited. This is primarily 
+// used so that the "save" command can write to a file without asking the user 
+// for a filename.
+let currentFileName = null
+
+const isWindows = process.platform.startsWith("win")
+
+
+//
+// Electron window initialization
+//
 
 function createWindow () {
   // Create the browser window.
@@ -15,7 +31,7 @@ function createWindow () {
   // and load the index.html of the app.
   win.loadURL(`file://${__dirname}/index.html`)
 
-  // Open the DevTools.
+  // Open the DevTools. (uncomment this for debugging purposes)
   // win.webContents.openDevTools()
 
   // Emitted when the window is closed.
@@ -40,8 +56,8 @@ app.on('window-all-closed', () => {
   
   // On Windows there's a chance that we made a specific temp directory
   // for diffs. On close we should delete that directory and its contents.
-  if (process.platform.startsWith("win")) {
-    let rm_rf = (path) => {
+  if (isWindows) {
+    const rm_rf = (path) => {
       try {
         const pathStats = fs.statsSync(path)
       } catch (e) {
@@ -73,11 +89,14 @@ app.on('activate', () => {
   }
 })
 
-let fileTypeFilters = [
+
+//
+// Build the menus
+//
+
+const fileTypeFilters = [
   { name: 'JSON', extensions: ['json'] }
 ]
-
-let currentFileName = null
 
 // File menu
 let template = [{
@@ -176,76 +195,80 @@ let template = [{
   }]
 }]
 
-// thanks, Electron
-function addUpdateMenuItems (items, position) {
-  if (process.mas) return
-
-  const version = require('electron').app.getVersion()
-  let updateItems = [{
-    label: `Version ${version}`,
-    enabled: false
-  }, {
-    label: 'Checking for Update',
-    enabled: false,
-    key: 'checkingForUpdate'
-  }, {
-    label: 'Check for Update',
-    visible: false,
-    key: 'checkForUpdate',
-    click: () => {
-      require('electron').autoUpdater.checkForUpdates()
-    }
-  }, {
-    label: 'Restart and Install Update',
-    enabled: true,
-    visible: false,
-    key: 'restartToUpdate',
-    click: function () {
-      require('electron').autoUpdater.quitAndInstall()
-    }
-  }]
-
-  items.splice.apply(items, [position, 0].concat(updateItems))
-}
-
+// On macOS, applications tend to have a menu item before "File"
+// that's the name of the application, which has a couple standard
+// submenus like "About" and "Quit"
 if (process.platform === 'darwin') {
-  const name = require('electron').app.getName()
-  template.unshift({
-    label: name,
-    submenu: [{
-      label: `About ${name}`,
-      role: 'about'
+  let appNameMenuItems = []
+
+  // add update menu items  unless this is the Mac App Store build,
+  // because the app store handles update UI
+  if (!process.mas) {
+    const version = require('electron').app.getVersion()
+    appNameMenuItems = appNameMenuItems.concat({
+      label: `Version ${version}`,
+      enabled: false
     }, {
-      type: 'separator'
+      label: 'Checking for Update',
+      enabled: false,
+      key: 'checkingForUpdate'
     }, {
-      label: 'Services',
-      role: 'services',
-      submenu: []
-    }, {
-      type: 'separator'
-    }, {
-      label: `Hide ${name}`,
-      accelerator: 'Command+H',
-      role: 'hide'
-    }, {
-      label: 'Hide Others',
-      accelerator: 'Command+Alt+H',
-      role: 'hideothers'
-    }, {
-      label: 'Show All',
-      role: 'unhide'
-    }, {
-      type: 'separator'
-    }, {
-      label: 'Quit',
-      accelerator: 'Command+Q',
+      label: 'Check for Update',
+      visible: false,
+      key: 'checkForUpdate',
       click: () => {
-        app.quit()
+        require('electron').autoUpdater.checkForUpdates()
       }
-    }]
+    }, {
+      label: 'Restart and Install Update',
+      enabled: true,
+      visible: false,
+      key: 'restartToUpdate',
+      click: function () {
+        require('electron').autoUpdater.quitAndInstall()
+      }
+    })
+  }
+
+  const name = require('electron').app.getName()
+
+  // these are standard items in the "app name" menu for Mac applications
+  appNameMenuItems = appNameMenuItems.concat({
+    label: `About ${name}`,
+    role: 'about'
+  }, {
+    type: 'separator'
+  }, {
+    label: 'Services',
+    role: 'services',
+    submenu: []
+  }, {
+    type: 'separator'
+  }, {
+    label: `Hide ${name}`,
+    accelerator: 'Command+H',
+    role: 'hide'
+  }, {
+    label: 'Hide Others',
+    accelerator: 'Command+Alt+H',
+    role: 'hideothers'
+  }, {
+    label: 'Show All',
+    role: 'unhide'
+  }, {
+    type: 'separator'
+  }, {
+    label: 'Quit',
+    accelerator: 'Command+Q',
+    click: () => {
+      app.quit()
+    }
   })
 
-  addUpdateMenuItems(template[0].submenu, 1)
+  template.unshift({
+    label: name,
+    submenu: appNameMenuItems
+  })
 }
 
 app.on('ready', () => {
@@ -253,12 +276,15 @@ app.on('ready', () => {
   Menu.setApplicationMenu(menu)
 })
 
+
+//
+// Handle events from the Elm app
+//
+
 ipc.on('spec-json', (event, filename, specJson) => {
   // TODO(Richard): add a callback to handle write errors
   fs.writeFile(filename, specJson)
 })
-
-const isWindows = process.platform.startsWith("win")
 
 function platformSpacesAndSlashes(filename) {
   if (isWindows) {
